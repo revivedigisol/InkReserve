@@ -25,6 +25,7 @@ const Post = () => {
   const [categoryMap, setCategoryMap] = useState<CategoryMap>(new Map());
   const [categoryParentMap, setCategoryParentMap] = useState<Map<number, number>>(new Map());
   const [checkedCategories, setCheckedCategories] = useState<Set<number>>(new Set());
+  const [tagIds, setTagIds] = useState<number[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const quillRef = useRef<Quill | null>(null);
   const [selected, setSelected] = useState("option-one");
@@ -228,8 +229,9 @@ const Post = () => {
         console.error(`Error processing tag ${tagName}:`, error);
       }
     }
-
-    return [...existingTags, ...newTags];
+    const tagIds = [...existingTags, ...newTags];
+    setTagIds(tagIds);
+    return tagIds;
   };
 
   const refineWithAI = async (postTitle: string, postContent: string) => {
@@ -516,7 +518,7 @@ const Post = () => {
                 </button>
               </>
             )}
-            {selected === "option-two" && <GeneratePost tagify={tagify} getBaseUrl={getBaseUrl} checkedCategories={checkedCategories} categories={categories} />}
+            {selected === "option-two" && <GeneratePost tagify={tagify} getBaseUrl={getBaseUrl} checkedCategories={checkedCategories} categories={categories} tagIds={tagIds} />}
           </div>
         </div>
       </div>

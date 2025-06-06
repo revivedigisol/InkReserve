@@ -48,7 +48,7 @@ const createOrGetTags = async (tagNames: string[], getBaseUrl: any) => {
   return [...existingTags, ...newTags];
 };
 
-const GeneratePost = ({ tagify, getBaseUrl, checkedCategories, categories }: { tagify: any, getBaseUrl: () => string, checkedCategories: Set<number>, categories: Category[] }) => {
+const GeneratePost = ({ tagify, getBaseUrl, checkedCategories, categories, tagIds}: { tagify: any, getBaseUrl: () => string, checkedCategories: Set<number>, categories: Category[], tagIds: number[] }) => {
   const [loading, setLoading] = useState(false);
   const generatePostWithAI = async () => {
     try {
@@ -71,7 +71,7 @@ const GeneratePost = ({ tagify, getBaseUrl, checkedCategories, categories }: { t
       });
       const tagNames = tagify ? tagify.value.map((tag: { value: string }) => tag.value) : [];
       const tags = await createOrGetTags(tagNames, getBaseUrl);
-      const response = await fetch(`https://${getBaseUrl()}/wp-json/ai/v1/generate-ai-posts`, {
+      const response = await fetch(`https://train.enle.org/wp-json/ai/v1/generate-ai-posts`, {
         method: "POST",
         headers: {
           Authorization: "Basic " + btoa("revivedigisol@gmail.com:3Lc8pnFkVpUB9hcBhbWN0AFk"),
@@ -83,11 +83,34 @@ const GeneratePost = ({ tagify, getBaseUrl, checkedCategories, categories }: { t
         }),
       });
       const data = await response.json();
-      if (data.success) {
+      console.log(data);
+
+      if (Array.isArray(data.posts)) {
+        for (const post of data.posts) {
+          const postData = {
+            title: post.post_title,
+            content: post.post_content,
+            status: "pending",
+            categories: checkedCategories,
+            tags: tagIds,
+          };
+
+          const response = await fetch(`https://${getBaseUrl()}/wp-json/wp/v2/posts`, {
+            method: "POST",
+            headers: {
+              Authorization: "Basic " + btoa("revivedigisol@gmail.com:3Lc8pnFkVpUB9hcBhbWN0AFk"),
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(postData),
+          });
+
+        }
+
         alert("✅ Post generated successfully!");
       } else {
-        alert("❌ Failed to generate post");
+        alert("❌ No posts generated");
       }
+
     } catch (error) {
       console.error("Error generating post with AI:", error);
     } finally {
