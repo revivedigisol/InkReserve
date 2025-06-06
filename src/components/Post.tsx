@@ -29,8 +29,8 @@ const Post = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const quillRef = useRef<Quill | null>(null);
   const [selected, setSelected] = useState("option-one");
-  const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
   const [submitLoading, setSubmitLoading] = useState(false);
+  const GEMINI_API_KEY = "AIzaSyDZNkky-1cbhBm35lPELhgZC1McDBu4zgg";
   const GEMINI_API_URL =
     "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
@@ -351,10 +351,11 @@ const Post = () => {
         ...(featuredMediaId && { featured_media: featuredMediaId }),
       };
 
+      const auth = btoa("revivedigisol@gmail.com:3Lc8pnFkVpUB9hcBhbWN0AFk");
       const response = await fetch(`https://${getBaseUrl()}/wp-json/wp/v2/posts`, {
         method: "POST",
         headers: {
-          Authorization: "Basic " + btoa("revivedigisol@gmail.com:3Lc8pnFkVpUB9hcBhbWN0AFk"),
+          Authorization: `Basic ${auth}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(postData),

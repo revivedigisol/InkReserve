@@ -71,10 +71,11 @@ const GeneratePost = ({ tagify, getBaseUrl, checkedCategories, categories, tagId
       });
       const tagNames = tagify ? tagify.value.map((tag: { value: string }) => tag.value) : [];
       const tags = await createOrGetTags(tagNames, getBaseUrl);
+      const auth = btoa("revivedigisol@gmail.com:3Lc8pnFkVpUB9hcBhbWN0AFk");
       const response = await fetch(`https://train.enle.org/wp-json/ai/v1/generate-ai-posts`, {
         method: "POST",
         headers: {
-          Authorization: "Basic " + btoa("revivedigisol@gmail.com:3Lc8pnFkVpUB9hcBhbWN0AFk"),
+          Authorization: `Basic ${auth}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -98,7 +99,7 @@ const GeneratePost = ({ tagify, getBaseUrl, checkedCategories, categories, tagId
           const response = await fetch(`https://${getBaseUrl()}/wp-json/wp/v2/posts`, {
             method: "POST",
             headers: {
-              Authorization: "Basic " + btoa("revivedigisol@gmail.com:3Lc8pnFkVpUB9hcBhbWN0AFk"),
+              Authorization: `Basic ${auth}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify(postData),
